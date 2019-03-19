@@ -10,8 +10,8 @@ CellReset.defaultConfig = {
     command = {
         staffRank = 2,
         rankError = "You are not an admin!\n",
-        excludePrefix = "\"%s\" will not be reset anymore!\n",
-        includePrefix = "\"%s\" will be reset normally now!\n"
+        excludeMessage = "\"%s\" will not be reset anymore!\n",
+        includeMessage = "\"%s\" will be reset normally now!\n"
     }
 }
 
@@ -114,7 +114,7 @@ end
 function CellReset.manageCells()
     for cellDescription, data in pairs(CellReset.data.cells) do
         if CellReset.needsReset(cellDescription) then
-            tes3mp.LogMessage(enumerations.log.INFO, "[CellReset] Resetting " .. cellDescription .. "\n")
+            tes3mp.LogMessage(enumerations.log.INFO, "[CellReset] Resetting " .. cellDescription)
             CellReset.resetCell(cellDescription)
         end
     end
@@ -154,10 +154,10 @@ function CellReset.Command(pid, cmd)
         end
         
         if cmd[2] == "exclude" then
-            tes3mp.SendMessage(pid, string.format(CellReset.config.command.excludePrefix, cellDescription))
+            tes3mp.SendMessage(pid, string.format(CellReset.config.command.excludeMessage, cellDescription))
             CellReset.exclude(cellDescription)
         elseif cmd[2] == "include" then
-            tes3mp.SendMessage(pid, string.format(CellReset.config.command.includePrefix, cellDescription))
+            tes3mp.SendMessage(pid, string.format(CellReset.config.command.includeMessage, cellDescription))
             CellReset.unExclude(cellDescription)
         else
             tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include> [cellDescription]\n")
