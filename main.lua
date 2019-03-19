@@ -6,7 +6,13 @@ CellReset.defaultConfig = {
     excludedCells = {},
     resetTime = 120,
     timeRate = 60,
-	useGameTime = true
+    useGameTime = true,
+    command = {
+        staffRank = 2,
+        rankError = "You are not an admin!\n",
+        excludePrefix = "\"%s\" will not be reset anymore!\n",
+        includePrefix = "\"%s\" will be reset normally now!\n"
+    }
 }
 
 CellReset.config = DataManager.loadConfiguration(CellReset.scriptName, CellReset.defaultConfig)
@@ -44,6 +50,10 @@ end
 
 function CellReset.exclude(cellDescription)
     CellReset.data.excludedCells[cellDescription] = true
+end
+
+function CellReset.unExclude(cellDescription)
+    CellReset.data.excludedCells[cellDescription] = nil
 end
 
 
@@ -129,5 +139,34 @@ end
 customEventHooks.registerHandler("OnServerPostInit", CellReset.OnServerPostInit)
 customEventHooks.registerHandler("OnCellUnload", CellReset.OnCellUnload)
 customEventHooks.registerHandler("OnServerExit", CellReset.OnServerExit)
+
+
+function CellReset.Command(pid, cmd)
+    if Players[pid].data.settings.staffRank >= CellReset.config.command.staffRank then
+        local cellDescription = ""
+        if cmd[3] ~= nil then
+            cellDescription = cmd[3]
+            for i = 4, #cmd do
+                cellDescription = cellDescription .. " " .. cmd[i]
+            end
+        else
+            cellDescription = tes3mp.GetCell(pid)
+        end
+        
+        if cmd[2] == "exclude" then
+            tes3mp.SendMessage(pid, string.format(CellReset.config.command.excludePrefix, cellDescription))
+            CellReset.exclude(cellDescription)
+        elseif cmd[2] == "include" then
+            tes3mp.SendMessage(pid, string.format(CellReset.config.command.includePrefix, cellDescription))
+            CellReset.unExclude(cellDescription)
+        else
+            tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include> [cellDescription]\n")
+        end
+    else
+        tes3mp.SendMessage(pid, CellReset.config.rankError)
+    end
+end
+
+customCommandHooks.registerCommand("cellreset", CellReset.Command)
 
 return CellReset
