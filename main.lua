@@ -58,31 +58,47 @@ end
 function CellReset.needsReset(cellDescription)
     if not CellReset.isExcluded(cellDescription) then
         local data = CellReset.data.cells[cellDescription]
-        if data~=nil then
-            local passedTime = 0
-
-            if CellReset.config.useGameTime then
-                passedTime = CellReset.getGameTime() - data.gameTime
-            else
-                passedTime = (os.time() - data.osTime) / CellReset.cofnig.timeRate
-            end
-
-            tes3mp.LogMessage(
-                enumerations.log.INFO,
-                "[CellReset] Time passed in " .. cellDescription.. ": " .. passedTime .."\n"
-            )
-
-            return passedTime > CellReset.config.resetTime
-        else
+        if data == nil then
             CellReset.updateCell(cellDescription)
         end
+    
+        local passedTime = 0
+
+        if CellReset.config.useGameTime then
+            passedTime = CellReset.getGameTime() - data.gameTime
+        else
+            passedTime = (os.time() - data.osTime) / CellReset.cofnig.timeRate
+        end
+
+        tes3mp.LogMessage(
+            enumerations.log.INFO,
+            "[CellReset] Time passed in " .. cellDescription.. ": " .. passedTime .."\n"
+        )
+
+        return passedTime > CellReset.config.resetTime
     end
     return false
 end
 
 function CellReset.resetCell(cellDescription)
     local cell = Cell(cellDescription)
-    os.remove(CellReset.cellDir .. cell.entryFile)
+
+    local cellFilePath = CellReset.cellDir .. cell.entryFile
+    
+    if tes3mp.DoesFileExist(cellFilePath) then
+        cell:Load()
+
+        for type, links in pairs(cell.data.recordLinks) do
+            local recordStore = RecordStores[type]
+            for refId, objects in pairs(links) do
+                recordStore:RemoveLinkToCell(refId, cell)
+            end
+        end
+
+        os.remove(cellFilePath)
+    end
+
+    CellReset.data.cells[cellDescription] = nil
 end
 
 function CellReset.manageCells()
@@ -98,6 +114,7 @@ end
 function CellReset.OnServerPostInit(eventStatus)
     CellReset.loadData()
     CellReset.manageCells()
+    CellReset.saveData()
 end
 
 function CellReset.OnCellUnload(eventStatus, pid, cellDescription)
