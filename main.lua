@@ -128,6 +128,9 @@ function CellReset.OnServerPostInit(eventStatus)
 end
 
 function CellReset.OnCellUnload(eventStatus, pid, cellDescription)
+    if not eventStatus.validCustomHandlers then
+        return
+    end
     CellReset.updateCell(cellDescription)
 end
 
