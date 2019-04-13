@@ -129,13 +129,11 @@ function CellReset.manageCells()
             customEventHooks.triggerHandlers("CellReset_OnReset", eventStatus, {cellDescription})
         end
     end
-    if next(reset_cells) ~= nil then
-        customEventHooks.triggerHandlers(
-            "CellReset_OnResetFinished",
-            customEventHooks.makeEventStatus(true, true),
-            {reset_cells}
-        )
-    end
+    customEventHooks.triggerHandlers(
+        "CellReset_OnResetFinished",
+        customEventHooks.makeEventStatus(true, true),
+        {reset_cells}
+    )
 end
 
 

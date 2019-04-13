@@ -11,3 +11,7 @@ You can find the configuration file in `server/data/custom/__config_CellReset.js
     * `staffRank` required to use the `/cellreset` command
     * `rankError`, `excludeMessage` and `includeMessage` allow to change messages shown by the `/cellreset` command
 * `logCellTime` whether the script should log time passed for every cell on server startup. `false` by default.
+
+There are also custom events provided for other scripts to use:
+* `CellReset_OnReset(cellDescription)` called when a cell is being reset.
+* `CellReset_OnResetFinished(cellDescriptions)` called after this script has finished processing cells, with a list of their `cellDescription`s as an argument. Doesn't have a validator. If no cells were reset, the list will be empty.
