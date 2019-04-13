@@ -12,7 +12,8 @@ CellReset.defaultConfig = {
         rankError = "You are not an admin!\n",
         excludeMessage = "\"%s\" will not be reset anymore!\n",
         includeMessage = "\"%s\" will be reset normally now!\n"
-    }
+    },
+    logCellTime = false
 }
 
 CellReset.config = DataManager.loadConfiguration(CellReset.scriptName, CellReset.defaultConfig)
@@ -41,6 +42,11 @@ end
 
 function CellReset.getGameTime()
     return WorldInstance.data.time.daysPassed*24 + WorldInstance.data.time.hour
+end
+
+
+function CellReset.LogMessage(mes)
+    tes3mp.LogMessage(enumerations.log.INFO, "[CellReset] " .. mes)
 end
 
 
@@ -80,10 +86,9 @@ function CellReset.needsReset(cellDescription)
             passedTime = (os.time() - data.osTime) / CellReset.cofnig.timeRate
         end
 
-        tes3mp.LogMessage(
-            enumerations.log.INFO,
-            "[CellReset] Time passed in " .. cellDescription.. ": " .. passedTime .."\n"
-        )
+        if CellReset.config.logCellTime then
+            CellReset.LogMessage("Time passed in " .. cellDescription.. ": " .. passedTime)
+        end
 
         return passedTime > CellReset.config.resetTime
     end
@@ -112,11 +117,24 @@ function CellReset.resetCell(cellDescription)
 end
 
 function CellReset.manageCells()
+    local reset_cells = {}
     for cellDescription, data in pairs(CellReset.data.cells) do
         if CellReset.needsReset(cellDescription) then
-            tes3mp.LogMessage(enumerations.log.INFO, "[CellReset] Resetting " .. cellDescription)
-            CellReset.resetCell(cellDescription)
+            local eventStatus = customEventHooks.triggerValidators("CellReset_OnReset", {cellDescription})
+            if eventStatus.validDefaultHandler then
+                table.insert(reset_cells, cellDescription)
+                CellReset.LogMessage("Resetting " .. cellDescription)
+                CellReset.resetCell(cellDescription)
+            end
+            customEventHooks.triggerHandlers("CellReset_OnReset", eventStatus, {cellDescription})
         end
+    end
+    if next(reset_cells) ~= nil then
+        customEventHooks.triggerHandlers(
+            "CellReset_OnResetFinished",
+            customEventHooks.makeEventStatus(true, true),
+            {reset_cells}
+        )
     end
 end
 
@@ -135,6 +153,9 @@ function CellReset.OnCellUnload(eventStatus, pid, cellDescription)
 end
 
 function CellReset.OnServerExit(eventStatus)
+    for cellDescription, cell in pairs(LoadedCells) do
+        CellReset.updateCell(cellDescription)
+    end
     CellReset.saveData()
 end
 

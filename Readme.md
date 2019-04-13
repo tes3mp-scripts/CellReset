@@ -10,3 +10,4 @@ You can find the configuration file in `server/data/custom/__config_CellReset.js
 * `command`
     * `staffRank` required to use the `/cellreset` command
     * `rankError`, `excludeMessage` and `includeMessage` allow to change messages shown by the `/cellreset` command
+* `logCellTime` whether the script should log time passed for every cell on server startup. `false` by default.
