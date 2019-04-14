@@ -167,10 +167,7 @@ function CellReset.Command(pid, cmd)
     if Players[pid].data.settings.staffRank >= CellReset.config.command.staffRank then
         local cellDescription = ""
         if cmd[3] ~= nil then
-            cellDescription = cmd[3]
-            for i = 4, #cmd do
-                cellDescription = cellDescription .. " " .. cmd[i]
-            end
+            cellDescription = table.concat(cmd, " ", 3)
         else
             cellDescription = tes3mp.GetCell(pid)
         end
