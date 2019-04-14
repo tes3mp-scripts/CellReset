@@ -83,7 +83,7 @@ function CellReset.needsReset(cellDescription)
         if CellReset.config.useGameTime then
             passedTime = CellReset.getGameTime() - data.gameTime
         else
-            passedTime = (os.time() - data.osTime) / CellReset.cofnig.timeRate
+            passedTime = (os.time() - data.osTime) / CellReset.config.timeRate
         end
 
         if CellReset.config.logCellTime then
