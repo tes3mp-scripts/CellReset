@@ -11,7 +11,8 @@ CellReset.defaultConfig = {
         staffRank = 2,
         rankError = "You are not an admin!\n",
         excludeMessage = "\"%s\" will not be reset anymore!\n",
-        includeMessage = "\"%s\" will be reset normally now!\n"
+        includeMessage = "\"%s\" will be reset normally now!\n",
+        saveMessage = "Saved all the CellReset data!\n"
     },
     logCellTime = false
 }
@@ -180,6 +181,7 @@ function CellReset.Command(pid, cmd)
             CellReset.unExclude(cellDescription)
         elseif cmd[2] == "save" then
             CellReset.saveData()
+            tes3mp.SendMessage(pid, CellReset.config.command.saveMessage)
         else
             tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include/save> [cellDescription]\n")
         end
@@ -187,7 +189,7 @@ function CellReset.Command(pid, cmd)
         tes3mp.SendMessage(pid, CellReset.config.rankError)
     end
 end
-
+    
 customCommandHooks.registerCommand("cellreset", CellReset.Command)
 
 return CellReset
