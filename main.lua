@@ -178,8 +178,10 @@ function CellReset.Command(pid, cmd)
         elseif cmd[2] == "include" then
             tes3mp.SendMessage(pid, string.format(CellReset.config.command.includeMessage, cellDescription))
             CellReset.unExclude(cellDescription)
+        elseif cmd[2] == "save" then
+            CellReset.saveData()
         else
-            tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include> [cellDescription]\n")
+            tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include/save> [cellDescription]\n")
         end
     else
         tes3mp.SendMessage(pid, CellReset.config.rankError)
