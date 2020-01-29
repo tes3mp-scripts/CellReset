@@ -102,7 +102,7 @@ function CellReset.resetCell(cellDescription)
     local cellFilePath = CellReset.cellDir .. cell.entryFile
     
     if tes3mp.DoesFileExist(cellFilePath) then
-        cell:Load()
+        cell:LoadFromDrive()
 
         for type, links in pairs(cell.data.recordLinks) do
             local recordStore = RecordStores[type]
@@ -111,7 +111,8 @@ function CellReset.resetCell(cellDescription)
             end
         end
 
-        os.remove(cellFilePath)
+        cell = Cell(cellDescription)
+        cell:SaveToDrive()
     end
 
     CellReset.data.cells[cellDescription] = nil
