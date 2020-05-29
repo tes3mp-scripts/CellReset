@@ -1,6 +1,7 @@
 local resetCellkills = function (eventStatus, cellDescription)
     if eventStatus.validCustomHandlers then
-        if LoadedCells[cellDescription] == nil then
+        local loaded = LoadedCells[cellDescription] ~= nil
+        if not loaded then
             logicHandler.LoadCell(cellDescription)
         end
 
@@ -19,6 +20,10 @@ local resetCellkills = function (eventStatus, cellDescription)
             end
         end
         WorldInstance:Save()
+
+        if not loaded then
+            logicHandler.UnloadCell(cellDescription)
+        end
     end
 end
 
