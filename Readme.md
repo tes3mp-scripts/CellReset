@@ -1,6 +1,6 @@
 This script simply removes all but specified cells' files on server startup, if enough time has passed since they were last visited. This allows creatures to spawn in a way most similar to single player OpenMW.
 
-`killReset.lua` is a plugin for this script, that also decreases the killcounts for any creatures or NPCs killed in the cell. Add `require("custom.CellReset.killCount")` after `CellReset = require("custom.CellReset.main")` in your `customScripts.lua` to enable it.
+`killReset.lua` is a plugin for this script, that also decreases the killcounts for any creatures or NPCs killed in the cell. Add `require("custom.CellReset.killReset")` after `CellReset = require("custom.CellReset.main")` in your `customScripts.lua` to enable it.
 
 Requires [DataManager](https://github.com/tes3mp-scripts/DataManager)!
 
