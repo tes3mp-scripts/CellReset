@@ -187,7 +187,7 @@ function CellReset.Command(pid, cmd)
             tes3mp.SendMessage(pid, "Command usage: /cellreset <exclude/include/save> [cellDescription]\n")
         end
     else
-        tes3mp.SendMessage(pid, CellReset.config.rankError)
+        tes3mp.SendMessage(pid, CellReset.config.command.rankError)
     end
 end
     
